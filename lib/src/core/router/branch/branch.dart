@@ -43,6 +43,16 @@ class Branch extends Equatable {
     );
   }
 
+  /// Convierte la abstracción a un [GoRoute] de GoRouter.
+  GoRoute toGoRoute() {
+    return GoRoute(
+      path: path,
+      name: name,
+      builder: builder,
+      routes: routes,
+    );
+  }
+
   /// Infiere el nombre del path limpiando slashes.
   /// Ejemplos: '/home' -> 'home', '/user/profile' -> 'user-profile', '/' -> 'root'
   static String _deriveName(String path) {

@@ -1,7 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:roadway/src/core/router/branch/branch.dart';
 import 'package:roadway/src/features/home/presentation/page/home_page.dart';
-import 'package:roadway/src/features/login/presentation/page/login_page.dart';
 
 class ShellBranches {
   static final List<Branch> _all = <Branch>[
