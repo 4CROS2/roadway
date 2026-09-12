@@ -5,7 +5,6 @@ import 'package:roadway/src/features/home/presentation/page/home_page.dart';
 class ShellBranches {
   static final List<Branch> _all = <Branch>[
     .register(path: '/home', builder: (_, _) => const HomePage()),
-    //.register(path: '/login', builder: (_, _) => const LoginPage()),
   ];
 
   static List<StatefulShellBranch> get routes =>
