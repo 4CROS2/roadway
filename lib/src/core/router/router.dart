@@ -16,7 +16,7 @@ class AppRouter {
   static GoRouter get router => _router;
 
   static final GoRouter _router = GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/login',
     navigatorKey: navigatorKey,
     debugLogDiagnostics: true,
     redirect: RouterRedirect.call,

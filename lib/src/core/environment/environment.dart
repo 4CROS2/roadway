@@ -13,5 +13,8 @@ class Environment {
   final String projectName = const String.fromEnvironment(
     'APPWRITEPROJECTNAME',
   );
+  final String databaseId = const String.fromEnvironment('DATABASEID');
+  final String appConfig = const String.fromEnvironment('APPCONFIG');
+  final String userSettingsTable = const String.fromEnvironment('USERSETTINGS');
   bool get isDebug => kDebugMode;
 }
