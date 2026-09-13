@@ -1,10 +1,13 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:roadway/injection_container.dart';
 import 'package:roadway/src/core/environment/environment.dart';
 
 class Appwrite {
-  const Appwrite._();
+  Appwrite() {
+    init();
+  }
 
-  static final Client _client = Client();
+  static final Client _client = sl<Client>();
   static final Environment _environment = Environment();
 
   static Future<void> init() async {
