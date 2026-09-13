@@ -4,7 +4,6 @@ import 'package:roadway/src/features/app/domain/entity/remote_colors.dart';
 
 class LightTheme {
   static ThemeData fromRemoteColors(RemoteColors remoteColors) {
-    print(remoteColors.scaffoldBackgroundColor);
     return ThemeData(
       brightness: .light,
       fontFamily: AppConstants.primaryFont,
