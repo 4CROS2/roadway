@@ -32,9 +32,10 @@ class AppDatasourceImpl with ConnectionMixin implements AppDatasource {
     yield Map<String, dynamic>.from(configuration);
 
     final RealtimeSubscription subscription = realtime.subscribe([
-      Channel.tablesdb(
-        environment.databaseId,
-      ).table(environment.appConfig).row().toString(),
+      Channel.tablesdb(environment.databaseId)
+          .table(environment.appConfig)
+          .row()
+          .toString(),
     ]);
 
     await for (final event in subscription.stream) {
@@ -43,6 +44,7 @@ class AppDatasourceImpl with ConnectionMixin implements AppDatasource {
       final name = data['name'] as String?;
       if (name == null) continue;
 
+      configuration[name] = data['value'];
       yield Map<String, dynamic>.from(configuration);
     }
   }

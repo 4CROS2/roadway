@@ -8,7 +8,7 @@ import 'package:roadway/src/features/app/domain/usecase/app_usecase.dart';
 part 'app_state.dart';
 
 class AppCubit extends Cubit<AppState> {
-  new({required this._usecase}) : super(const AppState()){
+  new({required this._usecase}) : super(const AppState()) {
     watchAppConfiguration();
   }
   final AppUsecase _usecase;
@@ -23,7 +23,15 @@ class AppCubit extends Cubit<AppState> {
   }
 
   void _onSuccess(AppConfiguration configuration) {
-    print(configuration);
+    emit(
+      state.copyWith(
+        appConfiguration: configuration.copyWith(
+          lightRemoteColors: configuration.lightRemoteColors,
+          darkRemoteColors: configuration.darkRemoteColors,
+          userPreference: configuration.userPreference,
+        ),
+      ),
+    );
   }
 
   void _onError(Object error) {
