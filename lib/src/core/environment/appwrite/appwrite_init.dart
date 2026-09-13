@@ -14,9 +14,5 @@ class Appwrite {
     _client
         .setEndpoint(_environment.apiBaseUrl)
         .setProject(_environment.projectId);
-    // si está en debug ejecurar  .setSelfSigned()
-    if (_environment.isDebug) {
-      _client.setSelfSigned();
-    }
   }
 }

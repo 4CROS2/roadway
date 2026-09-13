@@ -1,8 +1,8 @@
 {
-  "APPWRITEPROJECTID": "6a77c48d00147d2a782d",
-  "APPWRITEENDPOINT": "https://fra.cloud.appwrite.io/v1",
-  "APPWRITEPROJECTNAME": "roadway",
-  "DATABASEID": "6a9ccd72002ce167a81a",
-  "APPCONFIG": "6aa585a400112167406a",
-  "USERSETTINGS": "user_settings"
+  "APPWRITE_PROJECT_ID": "6a77c48d00147d2a782d",
+  "APPWRITE_ENDPOINT": "https://fra.cloud.appwrite.io/v1",
+  "APPWRITE_PROJECT_NAME": "roadway",
+  "DATABASE_ID": "6a9ccd72002ce167a81a",
+  "APP_CONFIG": "6aa585a400112167406a",
+  "USER_SETTINGS": "user_settings"
 }

@@ -22,7 +22,9 @@ class AppCubit extends Cubit<AppState> {
     );
   }
 
-  void _onSuccess(AppConfiguration configuration) {}
+  void _onSuccess(AppConfiguration configuration) {
+    print(configuration);
+  }
 
   void _onError(Object error) {
     print(error);

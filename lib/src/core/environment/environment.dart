@@ -8,13 +8,13 @@ class Environment {
   factory Environment() => _instance;
 
   // Se agrega 'const' al invocar String.fromEnvironment
-  final String apiBaseUrl = const String.fromEnvironment('APPWRITEENDPOINT');
-  final String projectId = const String.fromEnvironment('APPWRITEPROJECTID');
+  final String apiBaseUrl = const String.fromEnvironment('APPWRITE_ENDPOINT');
+  final String projectId = const String.fromEnvironment('APPWRITE_PROJECT_ID');
   final String projectName = const String.fromEnvironment(
-    'APPWRITEPROJECTNAME',
+    'APPWRITE_PROJECT_NAME',
   );
-  final String databaseId = const String.fromEnvironment('DATABASEID');
-  final String appConfig = const String.fromEnvironment('APPCONFIG');
-  final String userSettingsTable = const String.fromEnvironment('USERSETTINGS');
+  final String databaseId = const String.fromEnvironment('DATABASE_ID');
+  final String appConfig = const String.fromEnvironment('APP_CONFIG');
+  final String userSettingsTable = const String.fromEnvironment('USER_SETTINGS');
   bool get isDebug => kDebugMode;
 }

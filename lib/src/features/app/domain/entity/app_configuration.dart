@@ -3,28 +3,40 @@ import 'package:roadway/src/features/app/domain/entity/remote_colors.dart';
 import 'package:roadway/src/features/app/domain/entity/user_preference.dart';
 
 class AppConfiguration extends Equatable {
-  const AppConfiguration({
-    required this.remoteColors,
+  const new({
+    required this.darkRemoteColors,
+    required this.lightRemoteColors,
     required this.userPreference,
   });
 
   const AppConfiguration.empty()
-    : remoteColors = const LightRemoteColors.empty(),
+    : lightRemoteColors = const .empty(),
+      darkRemoteColors = const .empty(),
       userPreference = const .empty();
 
-  final RemoteColors remoteColors;
+  final LightRemoteColors lightRemoteColors;
+  final DarkRemoteColors darkRemoteColors;
   final UserPreference userPreference;
 
   AppConfiguration copyWith({
-    RemoteColors? remoteColors,
+    LightRemoteColors? lightRemoteColors,
+    DarkRemoteColors? darkRemoteColors,
     UserPreference? userPreference,
   }) {
     return AppConfiguration(
-      remoteColors: remoteColors ?? this.remoteColors,
+      lightRemoteColors: lightRemoteColors ?? this.lightRemoteColors,
+      darkRemoteColors: darkRemoteColors ?? this.darkRemoteColors,
       userPreference: userPreference ?? this.userPreference,
     );
   }
 
   @override
-  List<Object?> get props => [remoteColors, userPreference];
+  bool? get stringify => true;
+
+  @override
+  List<Object?> get props => [
+    lightRemoteColors,
+    darkRemoteColors,
+    userPreference,
+  ];
 }
