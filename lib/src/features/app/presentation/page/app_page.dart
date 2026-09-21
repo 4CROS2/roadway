@@ -36,7 +36,7 @@ class _AppPageState extends State<AppPage> {
             darkTheme: DarkTheme.fromRemoteColors(
               state.appConfiguration.darkRemoteColors,
             ),
-            themeMode: state.appConfiguration.userPreference.themeMode,
+            //themeMode: .dark,//state.appConfiguration.userPreference.themeMode,
             routerConfig: _router,
           );
         },

@@ -8,7 +8,12 @@ class LightTheme {
       brightness: .light,
       fontFamily: AppConstants.primaryFont,
       scaffoldBackgroundColor: remoteColors.scaffoldBackgroundColor,
-      colorScheme: ColorScheme.light(primary: remoteColors.primaryColor),
+      colorScheme: ColorScheme.light(
+        primary: remoteColors.primaryColor,
+        //secondary: remoteColors.secondaryColor,
+        surface: remoteColors.scaffoldBackgroundColor,
+      ),
     );
+        
   }
 }
