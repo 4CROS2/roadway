@@ -14,16 +14,28 @@ class _ShellState extends State<Shell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.yellow,
+      extendBody: true,
       body: widget.child,
-      bottomNavigationBar: NativeNavigationBar(
-        items: const <NativeNavigationItem>[
-          NativeNavigationItem(
-            label: 'Inicio',
-            icon: NativeNavigationIcon.home,
-          ),
-        ],
-        selectedIndex: widget.child.currentIndex,
-        onItemSelected: (int index) => widget.child.goBranch(index),
+      bottomNavigationBar: SafeArea(
+        child: NativeNavigationBar(
+          items: const <NativeNavigationItem>[
+            NativeNavigationItem(
+              label: 'Inicio',
+              icon: NativeNavigationIcon.home,
+            ),
+            NativeNavigationItem(
+              label: 'Buscar',
+              icon: NativeNavigationIcon.search,
+            ),
+            NativeNavigationItem(
+              label: 'Perfil',
+              icon: NativeNavigationIcon.profile,
+            ),
+          ],
+          selectedIndex: widget.child.currentIndex,
+          onItemSelected: (int index) => widget.child.goBranch(index),
+        ),
       ),
     );
   }

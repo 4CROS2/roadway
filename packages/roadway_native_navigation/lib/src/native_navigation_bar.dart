@@ -8,15 +8,45 @@ const String _channelPrefix = 'roadway_native_navigation/navigation_bar/';
 enum NativeNavigationIcon { home, search, favorites, profile }
 
 class NativeNavigationItem {
-  const NativeNavigationItem({required this.label, required this.icon});
+  const NativeNavigationItem({
+    required this.label,
+    this.icon,
+    this.iconAsset,
+    this.iconBytes,
+  }) : assert(
+         icon != null || iconAsset != null || iconBytes != null,
+         'Provide a native icon, Flutter asset, or image bytes.',
+       ),
+       assert(
+         iconAsset == null || iconBytes == null,
+         'Provide either an asset or image bytes, not both.',
+       );
 
   final String label;
-  final NativeNavigationIcon icon;
+  final NativeNavigationIcon? icon;
+  final String? iconAsset;
+  final Uint8List? iconBytes;
 
-  Map<String, Object> toCreationParams() => <String, Object>{
-    'label': label,
-    'icon': icon.name,
-  };
+  Future<Map<String, Object>> toCreationParams() async {
+    final Map<String, Object> params = <String, Object>{'label': label};
+    final Uint8List? imageBytes = iconBytes ?? await _loadIconAsset();
+
+    if (imageBytes != null) {
+      params['iconBytes'] = imageBytes;
+    } else {
+      params['icon'] = icon!.name;
+    }
+
+    return params;
+  }
+
+  Future<Uint8List?> _loadIconAsset() async {
+    final String? asset = iconAsset;
+    if (asset == null) return null;
+
+    final ByteData data = await rootBundle.load(asset);
+    return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+  }
 }
 
 class NativeNavigationBar extends StatefulWidget {
@@ -45,10 +75,20 @@ class NativeNavigationBar extends StatefulWidget {
 
 class _NativeNavigationBarState extends State<NativeNavigationBar> {
   MethodChannel? _channel;
+  late Future<Map<String, Object>> _creationParams;
+
+  @override
+  void initState() {
+    super.initState();
+    _creationParams = _loadCreationParams();
+  }
 
   @override
   void didUpdateWidget(covariant NativeNavigationBar oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.items, widget.items)) {
+      _creationParams = _loadCreationParams();
+    }
     if (oldWidget.selectedIndex != widget.selectedIndex) {
       _channel?.invokeMethod<void>('setSelectedIndex', widget.selectedIndex);
     }
@@ -86,37 +126,47 @@ class _NativeNavigationBarState extends State<NativeNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return SizedBox(
-        height: 80,
-        child: AndroidView(
-          viewType: _viewType,
-          onPlatformViewCreated: _onPlatformViewCreated,
-          creationParams: _creationParams,
-          creationParamsCodec: const StandardMessageCodec(),
-        ),
-      );
+    final TargetPlatform platform = defaultTargetPlatform;
+    if (platform != TargetPlatform.android && platform != TargetPlatform.iOS) {
+      return const SizedBox.shrink();
     }
 
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return SizedBox(
-        height: 49,
-        child: UiKitView(
-          viewType: _viewType,
-          onPlatformViewCreated: _onPlatformViewCreated,
-          creationParams: _creationParams,
-          creationParamsCodec: const StandardMessageCodec(),
-        ),
-      );
-    }
+    final double height = platform == TargetPlatform.android ? 80 : 49;
+    return FutureBuilder<Map<String, Object>>(
+      future: _creationParams,
+      builder:
+          (BuildContext context, AsyncSnapshot<Map<String, Object>> snapshot) {
+            if (snapshot.hasError) return ErrorWidget(snapshot.error!);
+            if (!snapshot.hasData) return SizedBox(height: height);
 
-    return const SizedBox.shrink();
+            return SizedBox(
+              height: height,
+              child: platform == TargetPlatform.android
+                  ? AndroidView(
+                      viewType: _viewType,
+                      onPlatformViewCreated: _onPlatformViewCreated,
+                      creationParams: snapshot.data,
+                      creationParamsCodec: const StandardMessageCodec(),
+                    )
+                  : UiKitView(
+                      viewType: _viewType,
+                      onPlatformViewCreated: _onPlatformViewCreated,
+                      creationParams: snapshot.data,
+                      creationParamsCodec: const StandardMessageCodec(),
+                    ),
+            );
+          },
+    );
   }
 
-  Map<String, Object> get _creationParams => <String, Object>{
-    'items': widget.items
-        .map((NativeNavigationItem item) => item.toCreationParams())
-        .toList(growable: false),
-    'selectedIndex': widget.selectedIndex,
-  };
+  Future<Map<String, Object>> _loadCreationParams() async {
+    return <String, Object>{
+      'items': await Future.wait(
+        widget.items.map(
+          (NativeNavigationItem item) => item.toCreationParams(),
+        ),
+      ),
+      'selectedIndex': widget.selectedIndex,
+    };
+  }
 }

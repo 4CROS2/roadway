@@ -1,7 +1,11 @@
 package com.crossdev.roadway.roadway_native_navigation
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.view.View
+import androidx.appcompat.content.res.AppCompatResources
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
@@ -44,12 +48,12 @@ private class NativeNavigationBarPlatformView(
         messenger,
         "roadway_native_navigation/navigation_bar/$viewId",
     )
-    private val items = args.asNavigationItems()
+    private val items = args.asNavigationItems(context)
 
     init {
         val selectedIndex = args.selectedIndex(items.size)
         items.forEachIndexed { index, item ->
-            navigationView.menu.add(0, index, index, item.label).setIcon(item.icon.drawable)
+            navigationView.menu.add(0, index, index, item.label).icon = item.icon
         }
         navigationView.selectedItemId = selectedIndex
         navigationView.setOnItemSelectedListener { menuItem ->
@@ -82,16 +86,16 @@ private class NativeNavigationBarPlatformView(
     }
 }
 
-private data class NativeNavigationItem(val label: String, val icon: NativeNavigationIcon)
+private data class NativeNavigationItem(val label: String, val icon: Drawable)
 
-private enum class NativeNavigationIcon(val drawable: Int) {
-    HOME(android.R.drawable.ic_menu_myplaces),
-    SEARCH(android.R.drawable.ic_menu_search),
-    FAVORITES(android.R.drawable.btn_star_big_on),
-    PROFILE(android.R.drawable.ic_menu_manage),
+private enum class NativeNavigationIcon(val resourceId: Int) {
+    HOME(R.drawable.roadway_native_navigation_ic_home),
+    SEARCH(R.drawable.roadway_native_navigation_ic_search),
+    FAVORITES(R.drawable.roadway_native_navigation_ic_favorites),
+    PROFILE(R.drawable.roadway_native_navigation_ic_profile),
 }
 
-private fun Any?.asNavigationItems(): List<NativeNavigationItem> {
+private fun Any?.asNavigationItems(context: Context): List<NativeNavigationItem> {
     val arguments = this as? Map<*, *> ?: error("Native navigation arguments are required.")
     val rawItems = arguments["items"] as? List<*> ?: error("Native navigation items are required.")
     check(rawItems.isNotEmpty() && rawItems.size <= 5) {
@@ -100,8 +104,27 @@ private fun Any?.asNavigationItems(): List<NativeNavigationItem> {
     return rawItems.map { rawItem ->
         val item = rawItem as? Map<*, *> ?: error("A native navigation item is invalid.")
         val label = item["label"] as? String ?: error("A native navigation label is required.")
-        val icon = item["icon"] as? String ?: error("A native navigation icon is required.")
-        NativeNavigationItem(label, NativeNavigationIcon.valueOf(icon.uppercase()))
+        NativeNavigationItem(label, item.asDrawable(context))
+    }
+}
+
+private fun Map<*, *>.asDrawable(context: Context): Drawable {
+    val iconBytes = this["iconBytes"] as? ByteArray
+    if (iconBytes != null) {
+        val bitmap = BitmapFactory.decodeByteArray(iconBytes, 0, iconBytes.size)
+            ?: error("The native navigation image bytes are invalid.")
+        return BitmapDrawable(context.resources, bitmap)
+    }
+
+    val iconName = this["icon"] as? String
+        ?: error("A native navigation icon is required.")
+    val resourceId = try {
+        NativeNavigationIcon.valueOf(iconName.uppercase()).resourceId
+    } catch (_: IllegalArgumentException) {
+        error("The native navigation icon '$iconName' is unsupported.")
+    }
+    return requireNotNull(AppCompatResources.getDrawable(context, resourceId)) {
+        "The native navigation icon resource is unavailable."
     }
 }
 

@@ -46,4 +46,20 @@ void main() {
       throwsAssertionError,
     );
   });
+
+  test('serializes supplied image bytes for the native platform', () async {
+    // Arrange
+    final NativeNavigationItem item = NativeNavigationItem(
+      label: 'Home',
+      iconBytes: Uint8List.fromList(<int>[137, 80, 78, 71]),
+    );
+
+    // Act
+    final Map<String, Object> params = await item.toCreationParams();
+
+    // Assert
+    expect(params['label'], 'Home');
+    expect(params['iconBytes'], isA<Uint8List>());
+    expect(params.containsKey('icon'), isFalse);
+  });
 }

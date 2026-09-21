@@ -71,7 +71,7 @@ private final class NativeNavigationBarPlatformView: NSObject, FlutterPlatformVi
     tabBar.items = items.enumerated().map { index, item in
       UITabBarItem(
         title: item["label"] as? String,
-        image: UIImage(systemName: NativeNavigationIcon(rawValue: item["icon"] as? String ?? "home")?.systemName ?? "house"),
+        image: item.iconImage,
         tag: index
       )
     }
@@ -126,5 +126,23 @@ private enum NativeNavigationIcon: String {
     case .favorites: "star"
     case .profile: "person"
     }
+  }
+}
+
+private extension Dictionary where Key == String, Value == Any {
+  var iconImage: UIImage {
+    if let imageData = (self["iconBytes"] as? FlutterStandardTypedData)?.data,
+      let image = UIImage(data: imageData) {
+      return image.withRenderingMode(.alwaysTemplate)
+    }
+
+    guard
+      let iconName = self["icon"] as? String,
+      let icon = NativeNavigationIcon(rawValue: iconName),
+      let image = UIImage(systemName: icon.systemName)
+    else {
+      preconditionFailure("The native navigation icon is invalid.")
+    }
+    return image
   }
 }
