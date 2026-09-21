@@ -1,7 +1,6 @@
 name: roadway_native_navigation
-description: "A new Flutter plugin project."
-version: 0.0.1
-homepage:
+description: Native Android and iOS navigation bars for Flutter applications.
+version: 0.1.0
 
 environment:
   sdk: ^3.13.3
@@ -10,7 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.0.2
 
 dev_dependencies:
   flutter_test:

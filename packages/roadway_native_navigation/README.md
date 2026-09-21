@@ -1,15 +1,19 @@
 # roadway_native_navigation
 
-A new Flutter plugin project.
+Renders a native Android `BottomNavigationView` or iOS `UITabBar`. It does not
+own navigation state: use the selected callback to delegate transitions to
+`go_router`.
 
-## Getting Started
+```dart
+NativeNavigationBar(
+  items: const <NativeNavigationItem>[
+    NativeNavigationItem(label: 'Home', icon: NativeNavigationIcon.home),
+  ],
+  selectedIndex: navigationShell.currentIndex,
+  onItemSelected: navigationShell.goBranch,
+)
+```
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/to/develop-plugins),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+Provide between one and five items. The selected index is synchronized from
+Flutter to the native control, while taps are sent back through
+`onItemSelected`.

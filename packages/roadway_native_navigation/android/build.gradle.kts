@@ -72,6 +72,7 @@ kotlin {
 }
 
 dependencies {
+    implementation("com.google.android.material:material:1.13.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("org.mockito:mockito-core:5.0.0")
 }
