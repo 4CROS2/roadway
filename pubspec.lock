@@ -605,6 +605,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
+  roadway_native_navigation:
+    dependency: "direct main"
+    description:
+      path: "packages/roadway_native_navigation"
+      relative: true
+    source: path
+    version: "0.0.1"
   sky_engine:
     dependency: transitive
     description: flutter
