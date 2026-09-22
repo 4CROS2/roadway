@@ -1,9 +1,13 @@
+import 'dart:math' as math;
+import 'dart:ui' as ui;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 const String _viewType = 'roadway_native_navigation/navigation_bar';
 const String _channelPrefix = 'roadway_native_navigation/navigation_bar/';
+const int _customIconSize = 25;
 
 enum NativeNavigationIcon { home, search, favorites, profile }
 
@@ -45,7 +49,11 @@ class NativeNavigationItem {
     if (asset == null) return null;
 
     final ByteData data = await rootBundle.load(asset);
-    return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+    final Uint8List bytes = data.buffer.asUint8List(
+      data.offsetInBytes,
+      data.lengthInBytes,
+    );
+    return _resizeIcon(bytes);
   }
 }
 
@@ -168,5 +176,46 @@ class _NativeNavigationBarState extends State<NativeNavigationBar> {
       ),
       'selectedIndex': widget.selectedIndex,
     };
+  }
+}
+
+Future<Uint8List> _resizeIcon(Uint8List bytes) async {
+  final ui.ImmutableBuffer buffer = await ui.ImmutableBuffer.fromUint8List(
+    bytes,
+  );
+  final ui.ImageDescriptor descriptor = await ui.ImageDescriptor.encoded(
+    buffer,
+  );
+
+  try {
+    final double scale =
+        _customIconSize / math.max(descriptor.width, descriptor.height);
+    final ui.Codec codec = await descriptor.instantiateCodec(
+      targetWidth: math.max(1, (descriptor.width * scale).round()),
+      targetHeight: math.max(1, (descriptor.height * scale).round()),
+    );
+
+    try {
+      final ui.FrameInfo frame = await codec.getNextFrame();
+      try {
+        final ByteData? resized = await frame.image.toByteData(
+          format: ui.ImageByteFormat.png,
+        );
+        if (resized == null) {
+          throw StateError('Unable to encode the custom navigation icon.');
+        }
+        return resized.buffer.asUint8List(
+          resized.offsetInBytes,
+          resized.lengthInBytes,
+        );
+      } finally {
+        frame.image.dispose();
+      }
+    } finally {
+      codec.dispose();
+    }
+  } finally {
+    descriptor.dispose();
+    buffer.dispose();
   }
 }

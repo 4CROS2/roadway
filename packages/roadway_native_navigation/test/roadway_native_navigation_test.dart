@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -62,4 +64,34 @@ void main() {
     expect(params['iconBytes'], isA<Uint8List>());
     expect(params.containsKey('icon'), isFalse);
   });
+
+  test(
+    'resizes custom icon assets before sending them to the platform',
+    () async {
+      // Arrange
+      const NativeNavigationItem item = NativeNavigationItem(
+        label: 'Custom',
+        iconAsset: 'assets/icons/ic_roadway.png',
+      );
+
+      // Act
+      final Map<String, Object> params = await item.toCreationParams();
+      final ui.Codec codec = await ui.instantiateImageCodec(
+        params['iconBytes']! as Uint8List,
+      );
+
+      // Assert
+      try {
+        final ui.FrameInfo frame = await codec.getNextFrame();
+        try {
+          expect(frame.image.width, lessThanOrEqualTo(25));
+          expect(frame.image.height, lessThanOrEqualTo(25));
+        } finally {
+          frame.image.dispose();
+        }
+      } finally {
+        codec.dispose();
+      }
+    },
+  );
 }

@@ -133,7 +133,9 @@ private extension Dictionary where Key == String, Value == Any {
   var iconImage: UIImage {
     if let imageData = (self["iconBytes"] as? FlutterStandardTypedData)?.data,
       let image = UIImage(data: imageData) {
-      return image.withRenderingMode(.alwaysTemplate)
+      return image
+        .scaledToFit(size: CGSize(width: 25, height: 25))
+        .withRenderingMode(.alwaysTemplate)
     }
 
     guard
@@ -144,5 +146,24 @@ private extension Dictionary where Key == String, Value == Any {
       preconditionFailure("The native navigation icon is invalid.")
     }
     return image
+  }
+}
+
+private extension UIImage {
+  func scaledToFit(size: CGSize) -> UIImage {
+    let scale = min(size.width / self.size.width, size.height / self.size.height)
+    let scaledSize = CGSize(
+      width: self.size.width * scale,
+      height: self.size.height * scale
+    )
+    let origin = CGPoint(
+      x: (size.width - scaledSize.width) / 2,
+      y: (size.height - scaledSize.height) / 2
+    )
+    let renderer = UIGraphicsImageRenderer(size: size)
+
+    return renderer.image { _ in
+      self.draw(in: CGRect(origin: origin, size: scaledSize))
+    }
   }
 }

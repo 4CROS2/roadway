@@ -13,6 +13,13 @@ class LightTheme {
         //secondary: remoteColors.secondaryColor,
         surface: remoteColors.scaffoldBackgroundColor,
       ),
+      inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(
+          borderRadius: .circular(14),
+          
+        ) ,
+        
+      )
     );
         
   }

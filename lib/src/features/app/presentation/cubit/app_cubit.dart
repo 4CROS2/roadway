@@ -35,7 +35,7 @@ class AppCubit extends Cubit<AppState> {
   }
 
   void _onError(Object error) {
-    print(error);
+    //print(error);
   }
 
   void cancelWatchAppConfiguration() {

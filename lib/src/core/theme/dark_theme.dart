@@ -10,6 +10,9 @@ class DarkTheme {
       scaffoldBackgroundColor: remoteColors.scaffoldBackgroundColor,
       colorScheme: .dark(primary: remoteColors.primaryColor),
       textTheme: TextTheme(),
+       inputDecorationTheme: InputDecorationTheme(
+        border: OutlineInputBorder(borderRadius: .circular(14)),
+      )
     );
   }
 }
